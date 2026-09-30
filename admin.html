@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Portal - ASTEROID2 SHIBA ($AST2)</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800;900&family=Chakra+Petch:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Chakra Petch', sans-serif; background: #030712; color: #f8fafc; }
+    .font-orbitron { font-family: 'Orbitron', sans-serif; }
+  </style>
+</head>
+<body class="min-h-screen p-3 md:p-8">
+  <div class="max-w-7xl mx-auto">
+    <!-- Header -->
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-amber-500/40 pb-6 mb-6">
+      <div>
+        <div class="flex items-center gap-3">
+          <span class="w-3 h-3 rounded-full bg-emerald-400 animate-ping"></span>
+          <h1 class="text-2xl md:text-3xl font-black text-amber-400 font-orbitron tracking-wider">
+            AST2 CENTRAL ADMIN PORTAL
+          </h1>
+        </div>
+        <p class="text-xs md:text-sm text-slate-400 mt-1">
+          Hostinger Control Hub • Withdrawals, Rewards, Referrals, & Social Tasks Management
+        </p>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <button onclick="fetchAllData()" class="px-4 py-2 rounded-xl bg-slate-900 border border-amber-500/50 text-amber-300 font-bold hover:bg-slate-800 transition flex items-center gap-2 text-xs md:text-sm font-orbitron">
+          🔄 REFRESH ALL
+        </button>
+        <button onclick="exportCSV()" class="px-4 py-2 rounded-xl bg-gradient-to-r from-amber-500 to-yellow-400 hover:from-amber-400 hover:to-yellow-300 text-black font-extrabold font-orbitron text-xs md:text-sm transition shadow-[0_0_15px_rgba(245,158,11,0.4)]">
+          📥 EXPORT CSV (TON)
+        </button>
+      </div>
+    </div>
+
+    <!-- 4 Key Metrics Overview -->
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4 mb-6">
+      <div class="bg-slate-900/90 border border-slate-800 p-4 rounded-2xl">
+        <div class="text-[11px] text-slate-400 uppercase font-bold">Total Registered Users</div>
+        <div id="statTotalUsers" class="text-2xl md:text-3xl font-black font-orbitron text-white mt-1">0</div>
+        <div class="text-[10px] text-slate-500 mt-1">Active Mini App Miners</div>
+      </div>
+
+      <div class="bg-slate-900/90 border border-cyan-500/30 p-4 rounded-2xl">
+        <div class="text-[11px] text-cyan-400 uppercase font-bold">Total AST2 Holding</div>
+        <div id="statTotalRewards" class="text-2xl md:text-3xl font-black font-orbitron text-cyan-300 mt-1">0 AST2</div>
+        <div class="text-[10px] text-cyan-500 mt-1">Accumulated user balances</div>
+      </div>
+
+      <div class="bg-slate-900/90 border border-emerald-500/30 p-4 rounded-2xl">
+        <div class="text-[11px] text-emerald-400 uppercase font-bold">Total Referrals Joined</div>
+        <div id="statTotalReferrals" class="text-2xl md:text-3xl font-black font-orbitron text-emerald-300 mt-1">0 Users</div>
+        <div class="text-[10px] text-emerald-500 mt-1">Invited via referral links</div>
+      </div>
+
+      <div class="bg-slate-900/90 border border-amber-500/40 p-4 rounded-2xl">
+        <div class="text-[11px] text-amber-400 uppercase font-bold">Pending Withdrawals</div>
+        <div id="statPendingWithdrawals" class="text-2xl md:text-3xl font-black font-orbitron text-amber-300 mt-1">0</div>
+        <div class="text-[10px] text-amber-500 mt-1">Awaiting admin review</div>
+      </div>
+    </div>
+
+    <!-- Navigation Tabs -->
+    <div class="flex gap-2 border-b border-slate-800 mb-6 font-orbitron text-xs md:text-sm font-bold overflow-x-auto pb-1">
+      <button onclick="switchTab('withdrawals')" id="tabBtnWithdrawals" class="px-5 py-2.5 rounded-t-xl border-b-2 border-amber-400 text-amber-300 bg-slate-900/80">
+        💸 WITHDRAWALS QUEUE (<span id="countWd">0</span>)
+      </button>
+      <button onclick="switchTab('users')" id="tabBtnUsers" class="px-5 py-2.5 rounded-t-xl border-b-2 border-transparent text-slate-400 hover:text-white">
+        👥 USERS &amp; WALLETS (<span id="countUsers">0</span>)
+      </button>
+      <button onclick="switchTab('referrals')" id="tabBtnReferrals" class="px-5 py-2.5 rounded-t-xl border-b-2 border-transparent text-slate-400 hover:text-white">
+        🎁 REFERRALS LOG (<span id="countRef">0</span>)
+      </button>
+      <button onclick="switchTab('tasks')" id="tabBtnTasks" class="px-5 py-2.5 rounded-t-xl border-b-2 border-transparent text-slate-400 hover:text-white">
+        ⚙️ SOCIAL TASKS (<span id="countTasks">5</span>)
+      </button>
+    </div>
+
+    <!-- TAB 1: WITHDRAWALS QUEUE -->
+    <div id="tabWithdrawals" class="space-y-4">
+      <div class="bg-slate-900/90 border border-slate-800 rounded-2xl overflow-hidden shadow-2xl">
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-sm">
+            <thead class="bg-slate-950 text-amber-400 font-orbitron text-xs uppercase border-b border-slate-800">
+              <tr>
+                <th class="p-4">Date</th>
+                <th class="p-4">User</th>
+                <th class="p-4">Wallet Address (TON)</th>
+                <th class="p-4">Amount AST2</th>
+                <th class="p-4">Status</th>
+                <th class="p-4 text-center">Action</th>
+              </tr>
+            </thead>
+            <tbody id="tableWithdrawals" class="divide-y divide-slate-800/60 font-sans">
+              <tr>
+                <td colspan="6" class="p-8 text-center text-slate-500">Loading withdrawal records...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 2: REWARD & REFERRAL USER -->
+    <div id="tabUsers" class="hidden space-y-4">
+      <div class="bg-slate-900/90 border border-slate-800 rounded-2xl overflow-hidden shadow-2xl">
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-sm">
+            <thead class="bg-slate-950 text-cyan-400 font-orbitron text-xs uppercase border-b border-slate-800">
+              <tr>
+                <th class="p-4">Pilot / Username</th>
+                <th class="p-4">Telegram ID</th>
+                <th class="p-4">Invited By</th>
+                <th class="p-4">TON Wallet Address</th>
+                <th class="p-4">AST2 Balance</th>
+                <th class="p-4">Total Earned</th>
+                <th class="p-4">Referrals</th>
+                <th class="p-4">Boost Level</th>
+                <th class="p-4">Last Active</th>
+              </tr>
+            </thead>
+            <tbody id="tableUsers" class="divide-y divide-slate-800/60 font-sans">
+              <tr>
+                <td colspan="9" class="p-8 text-center text-slate-500">Loading user records...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 3: REFERRALS LOG (LIVE FROM REFERRALS.JSON) -->
+    <div id="tabReferrals" class="hidden space-y-4">
+      <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 bg-slate-900/90 border border-slate-800 p-4 rounded-2xl">
+        <div>
+          <h3 class="font-orbitron font-bold text-amber-400 text-sm uppercase">🤝 Live Referral Logs (referrals.json)</h3>
+          <p class="text-xs text-slate-400">All referral relations recorded directly into referrals.json on your Hostinger server.</p>
+        </div>
+        <div class="flex items-center gap-2">
+          <input type="text" id="refSearch" oninput="renderReferrals()" placeholder="Search code (e.g. AST-530562)..." class="px-3 py-1.5 rounded-lg bg-slate-950 border border-slate-700 text-xs text-white placeholder-slate-500" />
+          <button onclick="fetchAllData()" class="px-3 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-400 text-black font-bold text-xs font-orbitron transition">🔄 Refresh</button>
+        </div>
+      </div>
+
+      <div class="bg-slate-900/90 border border-slate-800 rounded-2xl overflow-hidden shadow-2xl">
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-sm">
+            <thead class="bg-slate-950 text-amber-400 font-orbitron text-xs uppercase border-b border-slate-800">
+              <tr>
+                <th class="p-4">Date &amp; Time</th>
+                <th class="p-4">Referrer Code (Inviter)</th>
+                <th class="p-4">Invited Friend</th>
+                <th class="p-4">Invited Telegram ID</th>
+                <th class="p-4">Reward AST2</th>
+                <th class="p-4 text-center">Server Status</th>
+              </tr>
+            </thead>
+            <tbody id="tableReferrals" class="divide-y divide-slate-800/60 font-sans">
+              <tr>
+                <td colspan="6" class="p-8 text-center text-slate-500">Loading referral records...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 4: MANAGE SOCIAL TASKS -->
+    <div id="tabTasks" class="hidden space-y-4">
+      <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-5 shadow-2xl">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-800 pb-4 mb-4">
+          <div>
+            <h3 class="font-orbitron font-bold text-base text-emerald-400 uppercase">
+              Edit &amp; Add Mini App Social Tasks
+            </h3>
+            <p class="text-xs text-slate-400">
+              Updates saved here will instantly reflect in the users' Telegram Mini App!
+            </p>
+          </div>
+          <button onclick="addTaskRow()" class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-orbitron text-xs font-bold transition flex items-center gap-1.5 self-start">
+            ➕ ADD NEW TASK
+          </button>
+        </div>
+
+        <div id="tasksContainer" class="space-y-3">
+          <!-- Dynamic Task Rows will render here -->
+        </div>
+
+        <div class="pt-4 border-t border-slate-800 flex justify-end">
+          <button onclick="saveAllTasks()" class="px-6 py-3 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-400 hover:from-emerald-400 hover:to-teal-300 text-black font-orbitron font-black text-sm uppercase transition shadow-[0_0_20px_rgba(16,185,129,0.4)]">
+            💾 SAVE ALL TASK CHANGES
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const API_URL = 'api/admin_api.php';
+    let appData = { withdrawals: [], users: [], tasks: [], referrals: [] };
+
+    function switchTab(tab) {
+      ['withdrawals', 'users', 'referrals', 'tasks'].forEach(t => {
+        const el = document.getElementById('tab' + t.charAt(0).toUpperCase() + t.slice(1));
+        const btn = document.getElementById('tabBtn' + t.charAt(0).toUpperCase() + t.slice(1));
+        if (el) el.classList.add('hidden');
+        if (btn) btn.className = 'px-5 py-2.5 rounded-t-xl border-b-2 border-transparent text-slate-400 hover:text-white';
+      });
+
+      if (tab === 'withdrawals') {
+        document.getElementById('tabWithdrawals').classList.remove('hidden');
+        document.getElementById('tabBtnWithdrawals').className = 'px-5 py-2.5 rounded-t-xl border-b-2 border-amber-400 text-amber-300 bg-slate-900/80';
+      } else if (tab === 'users') {
+        document.getElementById('tabUsers').classList.remove('hidden');
+        document.getElementById('tabBtnUsers').className = 'px-5 py-2.5 rounded-t-xl border-b-2 border-cyan-400 text-cyan-300 bg-slate-900/80';
+      } else if (tab === 'referrals') {
+        document.getElementById('tabReferrals').classList.remove('hidden');
+        document.getElementById('tabBtnReferrals').className = 'px-5 py-2.5 rounded-t-xl border-b-2 border-amber-400 text-amber-300 bg-slate-900/80';
+      } else if (tab === 'tasks') {
+        document.getElementById('tabTasks').classList.remove('hidden');
+        document.getElementById('tabBtnTasks').className = 'px-5 py-2.5 rounded-t-xl border-b-2 border-emerald-400 text-emerald-300 bg-slate-900/80';
+      }
+    }
+
+    async function fetchAllData() {
+      try {
+        const res = await fetch(API_URL + '?action=get_all_admin_data');
+        const json = await res.json();
+        if (json.status === 'success') {
+          appData = json.data || json;
+          if (json.referrals && !appData.referrals) appData.referrals = json.referrals;
+          renderOverview();
+          renderWithdrawals();
+          renderUsers();
+          renderReferrals();
+          renderTasks();
+        }
+      } catch (err) {
+        alert('Failed fetching data from api/admin_api.php. Verify the file exists at public_html/api/admin_api.php');
+      }
+    }
+
+    function renderOverview() {
+      const users = appData.users || [];
+      const withdrawals = appData.withdrawals || [];
+      const referrals = appData.referrals || [];
+
+      let totalReward = 0;
+      let totalRef = referrals.length;
+      users.forEach(u => {
+        totalReward += Number(u.balance || 0);
+        if (referrals.length === 0) {
+          totalRef += Number(u.referralCount || 0);
+        }
+      });
+
+      const pendingWd = withdrawals.filter(w => w.status === 'pending').length;
+
+      document.getElementById('statTotalUsers').innerText = users.length;
+      document.getElementById('statTotalRewards').innerText = totalReward.toLocaleString() + ' AST2';
+      document.getElementById('statTotalReferrals').innerText = totalRef + ' Invitations';
+      document.getElementById('statPendingWithdrawals').innerText = pendingWd;
+
+      document.getElementById('countWd').innerText = withdrawals.length;
+      document.getElementById('countUsers').innerText = users.length;
+      const countRefEl = document.getElementById('countRef');
+      if (countRefEl) countRefEl.innerText = referrals.length;
+      document.getElementById('countTasks').innerText = (appData.tasks || []).length;
+    }
+
+    function renderReferrals() {
+      const tbody = document.getElementById('tableReferrals');
+      if (!tbody) return;
+      let referrals = [...(appData.referrals || [])];
+      (appData.users || []).forEach(u => {
+        const inviter = u.invitedBy || u.inviterCode;
+        if (inviter) {
+          const uKey = String(u.userId || u.userName);
+          if (!referrals.some(r => String(r.invited_user_id || r.username) === uKey)) {
+            referrals.push({
+              referrer_code: inviter,
+              username: u.userName || 'Pilot',
+              invited_user_id: u.userId || '-',
+              reward: 50,
+              joinedDate: u.registered_at || u.last_active || 'Recently'
+            });
+          }
+        }
+      });
+      const query = (document.getElementById('refSearch')?.value || '').trim().toLowerCase();
+
+      const filtered = query ? referrals.filter(r => 
+        (r.referrer_code && r.referrer_code.toLowerCase().includes(query)) ||
+        (r.id && r.id.toLowerCase().includes(query)) ||
+        (r.username && r.username.toLowerCase().includes(query)) ||
+        (r.invited_first_name && r.invited_first_name.toLowerCase().includes(query)) ||
+        (r.invited_user_id && String(r.invited_user_id).toLowerCase().includes(query)) ||
+        (r.joinedDate && r.joinedDate.toLowerCase().includes(query))
+      ) : referrals;
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" class="p-8 text-center text-slate-500">' + 
+          (referrals.length === 0 ? 'No referral relations in referrals.json yet.' : 'No referral records match your search filter.') + 
+          '</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = filtered.map(r => {
+        const displayUsername = r.username || r.invited_username || r.invited_first_name || 'Pilot Shiba (Guest/Link)';
+        const dateFormatted = r.joinedDate || (r.timestamp ? new Date(typeof r.timestamp === 'number' && r.timestamp < 2000000000 ? r.timestamp * 1000 : r.timestamp).toLocaleString() : '-');
+
+        return `
+          <tr class="hover:bg-slate-800/30 transition">
+            <td class="p-4 text-xs font-mono text-slate-400">${dateFormatted}</td>
+            <td class="p-4">
+              <span class="px-2.5 py-1 rounded bg-amber-950/80 border border-amber-500/50 text-amber-300 font-mono font-bold text-xs">
+                ${r.referrer_code}
+              </span>
+            </td>
+            <td class="p-4 font-bold text-white flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full ${r.username ? 'bg-emerald-400' : 'bg-amber-400'}"></span>
+              <span>${displayUsername}</span>
+            </td>
+            <td class="p-4 font-mono text-slate-400 text-xs">${r.invited_user_id || 'Via Direct Link'}</td>
+            <td class="p-4 font-orbitron font-bold text-amber-400">+${Number(r.reward || 50).toLocaleString()} AST2</td>
+            <td class="p-4 text-center">
+              <span class="px-2.5 py-1 rounded-full text-xs font-bold font-orbitron bg-emerald-950 text-emerald-300 border border-emerald-600">
+                CREDITED
+              </span>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function renderWithdrawals() {
+      const tbody = document.getElementById('tableWithdrawals');
+      const withdrawals = appData.withdrawals || [];
+
+      if (withdrawals.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" class="p-8 text-center text-slate-500">No withdrawal requests yet.</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = withdrawals.map((item) => {
+        const isPending = item.status === 'pending';
+        const isApproved = item.status === 'approved';
+
+        return `
+          <tr class="hover:bg-slate-800/30 transition">
+            <td class="p-4 text-xs text-slate-400 font-mono">${item.dateStr || item.received_at || '-'}</td>
+            <td class="p-4 font-bold text-white">${item.userName || 'Pilot'}</td>
+            <td class="p-4 font-mono text-cyan-300 text-xs">
+              <div class="flex items-center gap-2">
+                <span>${item.walletAddress}</span>
+                <button onclick="navigator.clipboard.writeText('${item.walletAddress}'); alert('Wallet Address Copied!');" class="text-[10px] bg-slate-800 hover:bg-slate-700 px-2 py-0.5 rounded text-cyan-400">Copy</button>
+              </div>
+            </td>
+            <td class="p-4 font-orbitron font-bold text-emerald-400 text-base">+${Number(item.amount).toLocaleString()} AST2</td>
+            <td class="p-4">
+              <span class="px-2.5 py-1 rounded-full text-xs font-bold font-orbitron ${
+                isPending ? 'bg-amber-950 text-amber-300 border border-amber-600' :
+                isApproved ? 'bg-emerald-950 text-emerald-300 border border-emerald-600' :
+                'bg-red-950 text-red-300 border border-red-600'
+              }">
+                ${(item.status || 'pending').toUpperCase()}
+              </span>
+            </td>
+            <td class="p-4 text-center">
+              <div class="flex items-center justify-center gap-2">
+                <button onclick="updateWithdrawalStatus('${item.id}', 'approved')" class="px-3 py-1 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-lg text-xs transition">Approve</button>
+                <button onclick="updateWithdrawalStatus('${item.id}', 'rejected')" class="px-3 py-1 bg-red-800 hover:bg-red-700 text-white font-bold rounded-lg text-xs transition">Reject</button>
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    async function updateWithdrawalStatus(id, newStatus) {
+      try {
+        await fetch(API_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'update_status', id, status: newStatus })
+        });
+        fetchAllData();
+      } catch (err) {
+        alert('Failed updating withdrawal status');
+      }
+    }
+
+    function renderUsers() {
+      const tbody = document.getElementById('tableUsers');
+      const users = appData.users || [];
+
+      if (users.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="8" class="p-8 text-center text-slate-500">No user stats synced yet. As users open the Mini App, their profiles appear here.</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = users.map((u) => {
+        const wallet = u.walletAddress || 'Not Connected';
+        const hasWallet = Boolean(u.walletAddress);
+
+        return `
+          <tr class="hover:bg-slate-800/30 transition">
+            <td class="p-4 font-bold text-white flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full ${hasWallet ? 'bg-emerald-400' : 'bg-slate-500'}"></span>
+              <span>${u.userName || 'Pilot'}</span>
+            </td>
+            <td class="p-4 font-mono text-slate-400 text-xs">${u.userId || '-'}</td>
+            <td class="p-4 text-xs font-mono ${u.invitedBy || u.inviterCode ? 'text-amber-300 font-bold' : 'text-slate-500 italic'}">${u.invitedBy || u.inviterCode || 'Direct'}</td>
+            <td class="p-4 font-mono text-xs ${hasWallet ? 'text-cyan-300' : 'text-slate-500 italic'}">
+              <div class="flex items-center gap-2">
+                <span class="truncate max-w-[180px]">${wallet}</span>
+                ${hasWallet ? `<button onclick="navigator.clipboard.writeText('${wallet}'); alert('Wallet Address Copied!');" class="text-[10px] bg-slate-800 hover:bg-slate-700 px-2 py-0.5 rounded text-cyan-400 font-sans">Copy</button>` : ''}
+              </div>
+            </td>
+            <td class="p-4 font-orbitron font-bold text-cyan-300">${Number(u.balance || 0).toLocaleString()} AST2</td>
+            <td class="p-4 font-orbitron text-emerald-400">${Number(u.totalEarned || 0).toLocaleString()} AST2</td>
+            <td class="p-4 font-bold text-amber-300">${u.referralCount || 0} Friends (+ ${(Number(u.referralCount || 0) * 50).toLocaleString()} AST2)</td>
+            <td class="p-4 text-xs font-mono font-bold ${u.boostLevel > 20 ? 'text-amber-300' : 'text-purple-300'}">${u.boostLevel > 20 ? '👑 VIP ' + (u.boostLevel - 20) : 'Level ' + (u.boostLevel || 1)}</td>
+            <td class="p-4 text-xs font-mono text-slate-400">${u.last_active || u.registered_at || '-'}</td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function renderTasks() {
+      const container = document.getElementById('tasksContainer');
+      const tasks = appData.tasks || [];
+
+      container.innerHTML = tasks.map((t, idx) => {
+        return `
+          <div class="p-4 rounded-xl bg-slate-950 border border-slate-800 flex flex-col md:flex-row gap-3 items-start md:items-center justify-between">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-2 flex-1 w-full">
+              <div>
+                <label class="text-[10px] text-slate-400 uppercase font-bold">Task Title</label>
+                <input type="text" id="task_title_${idx}" value="${t.title}" class="w-full px-2.5 py-1.5 rounded bg-slate-900 border border-slate-700 text-xs text-white" />
+              </div>
+              <div>
+                <label class="text-[10px] text-slate-400 uppercase font-bold">Category (tiktok/x/telegram/website)</label>
+                <select id="task_cat_${idx}" class="w-full px-2.5 py-1.5 rounded bg-slate-900 border border-slate-700 text-xs text-white">
+                  <option value="tiktok" ${t.category === 'tiktok' ? 'selected' : ''}>TikTok</option>
+                  <option value="x" ${t.category === 'x' ? 'selected' : ''}>X / Twitter</option>
+                  <option value="telegram" ${t.category === 'telegram' ? 'selected' : ''}>Telegram</option>
+                  <option value="website" ${t.category === 'website' ? 'selected' : ''}>Website</option>
+                </select>
+              </div>
+              <div class="md:col-span-2">
+                <label class="text-[10px] text-slate-400 uppercase font-bold">Account / Channel URL Link</label>
+                <input type="url" id="task_url_${idx}" value="${t.url}" class="w-full px-2.5 py-1.5 rounded bg-slate-900 border border-slate-700 text-xs text-cyan-300 font-mono" />
+              </div>
+            </div>
+
+            <button onclick="removeTaskRow(${idx})" class="p-2 rounded-lg bg-red-950 hover:bg-red-900 border border-red-700 text-red-400 text-xs font-bold transition shrink-0" title="Delete Task">
+              🗑️ Delete
+            </button>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function addTaskRow() {
+      const newId = 'task-' + Date.now();
+      if (!appData.tasks) appData.tasks = [];
+      appData.tasks.push({
+        id: newId,
+        title: 'New Asteroid2 Shiba Task',
+        category: 'telegram',
+        reward: 20,
+        url: 'https://t.me/asteroid2shiba',
+        actionText: 'Join',
+        description: 'Follow our official channel'
+      });
+      renderTasks();
+    }
+
+    function removeTaskRow(idx) {
+      if (confirm('Are you sure you want to delete this task?')) {
+        appData.tasks.splice(idx, 1);
+        renderTasks();
+      }
+    }
+
+    async function saveAllTasks() {
+      const updated = [];
+      (appData.tasks || []).forEach((t, idx) => {
+        const title = document.getElementById('task_title_' + idx)?.value || t.title;
+        const category = document.getElementById('task_cat_' + idx)?.value || t.category;
+        const url = document.getElementById('task_url_' + idx)?.value || t.url;
+        updated.push({
+          ...t,
+          title,
+          category,
+          url,
+          reward: 20,
+          actionText: category === 'x' ? 'Follow' : (category === 'website' ? 'Visit' : 'Join'),
+          description: title
+        });
+      });
+
+      try {
+        const res = await fetch(API_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'save_tasks', tasks: updated })
+        });
+        const json = await res.json();
+        alert('SUCCESS! ' + (json.message || 'Social tasks have been saved and are now live in the Mini App!'));
+        fetchAllData();
+      } catch (err) {
+        alert('Failed saving tasks to Hostinger server.');
+      }
+    }
+
+    function exportCSV() {
+      const withdrawals = appData.withdrawals || [];
+      if (withdrawals.length === 0) return alert('No withdrawal records to export.');
+      let csv = 'Date,User,TON_Wallet_Address,Amount_AST2,Status,TX_Hash\n';
+      withdrawals.forEach(w => {
+        csv += `"${w.dateStr || ''}","${w.userName || ''}","${w.walletAddress || ''}",${w.amount || 0},"${w.status || ''}","${w.txHash || ''}"\n`;
+      });
+      const blob = new Blob([csv], { type: 'text/csv' });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'ast2_withdrawals_' + new Date().toISOString().slice(0, 10) + '.csv';
+      a.click();
+    }
+
+    // Load everything on start
+    fetchAllData();
+  </script>
+</body>
+</html>
