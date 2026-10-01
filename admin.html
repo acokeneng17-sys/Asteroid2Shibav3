@@ -114,7 +114,6 @@
               <tr>
                 <th class="p-4">Pilot / Username</th>
                 <th class="p-4">Telegram ID</th>
-                <th class="p-4">Invited By</th>
                 <th class="p-4">TON Wallet Address</th>
                 <th class="p-4">AST2 Balance</th>
                 <th class="p-4">Total Earned</th>
@@ -125,7 +124,7 @@
             </thead>
             <tbody id="tableUsers" class="divide-y divide-slate-800/60 font-sans">
               <tr>
-                <td colspan="9" class="p-8 text-center text-slate-500">Loading user records...</td>
+                <td colspan="8" class="p-8 text-center text-slate-500">Loading user records...</td>
               </tr>
             </tbody>
           </table>
@@ -275,22 +274,7 @@
     function renderReferrals() {
       const tbody = document.getElementById('tableReferrals');
       if (!tbody) return;
-      let referrals = [...(appData.referrals || [])];
-      (appData.users || []).forEach(u => {
-        const inviter = u.invitedBy || u.inviterCode;
-        if (inviter) {
-          const uKey = String(u.userId || u.userName);
-          if (!referrals.some(r => String(r.invited_user_id || r.username) === uKey)) {
-            referrals.push({
-              referrer_code: inviter,
-              username: u.userName || 'Pilot',
-              invited_user_id: u.userId || '-',
-              reward: 50,
-              joinedDate: u.registered_at || u.last_active || 'Recently'
-            });
-          }
-        }
-      });
+      const referrals = appData.referrals || [];
       const query = (document.getElementById('refSearch')?.value || '').trim().toLowerCase();
 
       const filtered = query ? referrals.filter(r => 
@@ -414,7 +398,6 @@
               <span>${u.userName || 'Pilot'}</span>
             </td>
             <td class="p-4 font-mono text-slate-400 text-xs">${u.userId || '-'}</td>
-            <td class="p-4 text-xs font-mono ${u.invitedBy || u.inviterCode ? 'text-amber-300 font-bold' : 'text-slate-500 italic'}">${u.invitedBy || u.inviterCode || 'Direct'}</td>
             <td class="p-4 font-mono text-xs ${hasWallet ? 'text-cyan-300' : 'text-slate-500 italic'}">
               <div class="flex items-center gap-2">
                 <span class="truncate max-w-[180px]">${wallet}</span>
@@ -424,7 +407,7 @@
             <td class="p-4 font-orbitron font-bold text-cyan-300">${Number(u.balance || 0).toLocaleString()} AST2</td>
             <td class="p-4 font-orbitron text-emerald-400">${Number(u.totalEarned || 0).toLocaleString()} AST2</td>
             <td class="p-4 font-bold text-amber-300">${u.referralCount || 0} Friends (+ ${(Number(u.referralCount || 0) * 50).toLocaleString()} AST2)</td>
-            <td class="p-4 text-xs font-mono font-bold ${u.boostLevel > 20 ? 'text-amber-300' : 'text-purple-300'}">${u.boostLevel > 20 ? '👑 VIP ' + (u.boostLevel - 20) : 'Level ' + (u.boostLevel || 1)}</td>
+            <td class="p-4 text-xs font-mono font-bold text-purple-300">Level ${u.boostLevel || 1}</td>
             <td class="p-4 text-xs font-mono text-slate-400">${u.last_active || u.registered_at || '-'}</td>
           </tr>
         `;
