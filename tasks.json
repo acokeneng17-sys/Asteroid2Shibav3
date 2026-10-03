@@ -1,9 +1,59 @@
 [
   {
+    "id": "task-partner-follow-x",
+    "title": "Follow Partner on X (Twitter)",
+    "category": "x",
+    "reward": 0.01,
+    "rewardType": "TON",
+    "isPartner": true,
+    "partnerName": "TON Partner",
+    "url": "https://x.com/Asteroid2Shiba",
+    "actionText": "Follow on X",
+    "description": "Follow our official verified partner account on X (Twitter) • Earn 0.01 TON / GRAM"
+  },
+  {
+    "id": "task-partner-like-x",
+    "title": "Like Partner Post on X",
+    "category": "x",
+    "reward": 0.01,
+    "rewardType": "TON",
+    "isPartner": true,
+    "partnerName": "TON Partner",
+    "url": "https://x.com/Asteroid2Shiba/status/2097965210137206802",
+    "actionText": "Like on X",
+    "description": "Like our official partner announcement post on X • Earn 0.01 TON / GRAM"
+  },
+  {
+    "id": "task-partner-comment-x",
+    "title": "Comment on Partner Post on X",
+    "category": "x",
+    "reward": 0.01,
+    "rewardType": "TON",
+    "isPartner": true,
+    "partnerName": "TON Partner",
+    "url": "https://x.com/Asteroid2Shiba/status/2097965210137206802",
+    "actionText": "Comment on X",
+    "description": "Leave a positive comment on our partner post on X • Earn 0.01 TON / GRAM"
+  },
+  {
+    "id": "task-partner-join-tg",
+    "title": "Join Partner Telegram Channel",
+    "category": "telegram",
+    "reward": 0.01,
+    "rewardType": "TON",
+    "isPartner": true,
+    "partnerName": "TON Partner",
+    "url": "https://t.me/asteroid2shiba",
+    "actionText": "Join Channel",
+    "description": "Join and subscribe to the official partner Telegram channel • Earn 0.01 TON / GRAM"
+  },
+  {
     "id": "task-tiktok",
     "title": "Follow TikTok Asteroid2 Shiba",
     "category": "tiktok",
     "reward": 20,
+    "rewardType": "AST2",
+    "isPartner": false,
     "url": "https://www.tiktok.com/@asteroid2shiba",
     "actionText": "Follow",
     "description": "Follow the official @asteroid2shiba account on TikTok"
@@ -13,6 +63,8 @@
     "title": "Follow Official X (Twitter) Account",
     "category": "x",
     "reward": 20,
+    "rewardType": "AST2",
+    "isPartner": false,
     "url": "https://x.com/Asteroid2Shiba",
     "actionText": "Follow",
     "description": "Follow the official @Asteroid2Shiba account on X"
@@ -22,6 +74,8 @@
     "title": "Like & Repost X Announcement",
     "category": "x",
     "reward": 20,
+    "rewardType": "AST2",
+    "isPartner": false,
     "url": "https://x.com/Asteroid2Shiba/status/2097965210137206802",
     "actionText": "Like & Repost",
     "description": "Like and repost the official $AST2 announcement post"
@@ -31,6 +85,8 @@
     "title": "Join Official Telegram Channel",
     "category": "telegram",
     "reward": 20,
+    "rewardType": "AST2",
+    "isPartner": false,
     "url": "https://t.me/asteroid2shiba",
     "actionText": "Join",
     "description": "Join the official Telegram channel t.me/asteroid2shiba"
@@ -40,6 +96,8 @@
     "title": "Visit asteroid2shiba.com Website",
     "category": "website",
     "reward": 20,
+    "rewardType": "AST2",
+    "isPartner": false,
     "url": "https://asteroid2shiba.com",
     "actionText": "Visit",
     "description": "Explore the official portal at https://asteroid2shiba.com"
