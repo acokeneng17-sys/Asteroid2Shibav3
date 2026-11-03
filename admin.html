@@ -10,7 +10,7 @@
     body { font-family: 'Chakra Petch', sans-serif; background: #030712; color: #f8fafc; }
     .font-orbitron { font-family: 'Orbitron', sans-serif; }
   </style>
-</head>
+<script src="/_aistudio-iframe.js?v=1f94f900"></script></head>
 <body class="min-h-screen p-3 md:p-8">
   <div class="max-w-7xl mx-auto">
     <!-- Header -->
@@ -27,12 +27,25 @@
         </p>
       </div>
 
-      <div class="flex items-center gap-3">
-        <button onclick="fetchAllData()" class="px-4 py-2 rounded-xl bg-slate-900 border border-amber-500/50 text-amber-300 font-bold hover:bg-slate-800 transition flex items-center gap-2 text-xs md:text-sm font-orbitron">
-          🔄 REFRESH ALL
+      <div class="flex items-center gap-2 flex-wrap">
+        <a href="./wallet.html" target="_blank" class="px-4 py-2 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-400 hover:from-emerald-400 hover:to-teal-300 text-black font-black font-orbitron text-xs transition shadow-[0_0_15px_rgba(16,185,129,0.4)] flex items-center gap-1.5" style="text-decoration:none;">
+          <span>👛</span>
+          <span>BUKA WEB WALLET</span>
+        </a>
+        <button onclick="fetchAllData()" class="px-3.5 py-2 rounded-xl bg-slate-900 border border-amber-500/50 text-amber-300 font-bold hover:bg-slate-800 transition flex items-center gap-1.5 text-xs font-orbitron">
+          🔄 REFRESH
         </button>
-        <button onclick="exportCSV()" class="px-4 py-2 rounded-xl bg-gradient-to-r from-amber-500 to-yellow-400 hover:from-amber-400 hover:to-yellow-300 text-black font-extrabold font-orbitron text-xs md:text-sm transition shadow-[0_0_15px_rgba(245,158,11,0.4)]">
-          📥 EXPORT CSV (TON)
+        <a href="./asteroid2-latest-mainnet.zip" download="asteroid2-latest-mainnet.zip" class="px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-amber-300 border border-amber-500/30 font-bold font-orbitron text-xs transition flex items-center gap-1" style="text-decoration:none;">
+          📥 HOSTINGER ZIP
+        </a>
+        <a href="./asteroid2_github_update.zip" download="asteroid2_github_update.zip" class="px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-purple-300 border border-purple-500/30 font-bold font-orbitron text-xs transition flex items-center gap-1" style="text-decoration:none;">
+          📦 GITHUB ZIP
+        </a>
+        <button onclick="exportCSV()" class="px-3 py-2 rounded-xl bg-gradient-to-r from-amber-500 to-yellow-400 hover:from-amber-400 hover:to-yellow-300 text-black font-extrabold font-orbitron text-xs transition shadow-md">
+          📥 EXPORT CSV
+        </button>
+        <button onclick="lockPortalSession()" class="px-3 py-2 rounded-xl bg-red-950/60 hover:bg-red-900 border border-red-500/50 text-red-300 font-bold hover:text-white transition flex items-center gap-1.5 text-xs font-orbitron cursor-pointer" title="Kunci Akses Admin">
+          🔒 KUNCI
         </button>
       </div>
     </div>
@@ -78,10 +91,36 @@
       <button onclick="switchTab('tasks')" id="tabBtnTasks" class="px-5 py-2.5 rounded-t-xl border-b-2 border-transparent text-slate-400 hover:text-white">
         ⚙️ SOCIAL TASKS (<span id="countTasks">5</span>)
       </button>
+      <button onclick="switchTab('sourcecode')" id="tabBtnSourcecode" class="px-5 py-2.5 rounded-t-xl border-b-2 border-transparent text-slate-400 hover:text-white font-bold">
+        📦 KODE SUMBER APP (EXPORT)
+      </button>
     </div>
 
     <!-- TAB 1: WITHDRAWALS QUEUE -->
     <div id="tabWithdrawals" class="space-y-4">
+      <!-- Hostinger Pending Notice & Bot Alert Import Banner -->
+      <div class="p-4 rounded-2xl bg-gradient-to-r from-amber-950/70 via-slate-900 to-purple-950/70 border border-amber-500/50 shadow-xl flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="w-3 h-3 rounded-full bg-amber-400 animate-pulse"></span>
+            <h4 class="font-orbitron font-bold text-amber-300 text-sm uppercase tracking-wide">
+              Hostinger Belum Aktif? Notifikasi Penarikan Masuk ke Bot Telegram!
+            </h4>
+          </div>
+          <p class="text-xs text-slate-300 mt-1 font-sans leading-relaxed">
+            Karena server Hostinger belum aktif/terkoneksi, setiap permintaan penarikan dari pengguna otomatis dikirimkan ke <strong>Bot Telegram Admin Anda</strong>.
+            Gunakan tombol <strong>"📋 Impor dari Bot Telegram"</strong> di samping untuk menempelkan pesan bot langsung ke tabel antrean ini.
+          </p>
+        </div>
+        <div class="flex items-center gap-2 flex-wrap shrink-0">
+          <button onclick="openImportBotModal()" class="px-4 py-2.5 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-orbitron text-xs font-bold shadow-[0_0_15px_rgba(168,85,247,0.4)] flex items-center gap-1.5 transition">
+            📋 IMPOR DARI BOT TELEGRAM
+          </button>
+          <button onclick="openManualWdModal()" class="px-3.5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-cyan-300 font-orbitron text-xs font-bold flex items-center gap-1.5 transition">
+            ➕ INPUT MANUAL
+          </button>
+        </div>
+      </div>
       <div class="bg-slate-900/90 border border-slate-800 rounded-2xl overflow-hidden shadow-2xl">
         <div class="overflow-x-auto">
           <table class="w-full text-left text-sm">
@@ -197,14 +236,172 @@
         </div>
       </div>
     </div>
+
+    <!-- TAB 5: MANAGE SOURCE CODE -->
+    <div id="tabSourcecode" class="hidden space-y-4">
+      <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-5 shadow-2xl space-y-4">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-800 pb-4">
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="text-xl">📦</span>
+              <h3 class="font-orbitron font-bold text-base text-cyan-300 uppercase">
+                Ekspor & Unduh Kode Sumber ($AST2)
+              </h3>
+            </div>
+            <p class="text-xs text-slate-400 mt-0.5">
+              Salin atau unduh file kode aplikasi langsung dari portal admin ini tanpa risiko error untuk diunggah/ditimpa ke GitHub Pages atau cPanel.
+            </p>
+          </div>
+          <div class="flex items-center gap-2 flex-wrap">
+            <button onclick="downloadAdminSourceFile()" id="btnAdminDownloadSource" class="px-4 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-400 hover:from-emerald-400 text-black font-orbitron font-black text-xs uppercase flex items-center gap-1.5 shadow transition cursor-pointer">
+              ⬇️ UNDUH INDEX.HTML
+            </button>
+            <button onclick="copyAdminSourceCode()" class="px-4 py-2.5 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white font-orbitron font-bold text-xs uppercase flex items-center gap-1.5 shadow transition cursor-pointer">
+              📋 SALIN SEMUA KODE
+            </button>
+          </div>
+        </div>
+
+        <!-- File Switcher -->
+        <div class="flex items-center justify-between gap-2 flex-wrap">
+          <div class="flex items-center gap-2 font-orbitron text-xs">
+            <button onclick="switchAdminFile('index.html')" id="btnAdmFileIndex" class="px-3.5 py-2 rounded-xl bg-cyan-500 text-black font-bold">
+              📄 FILE UTAMA: INDEX.HTML
+            </button>
+            <button onclick="switchAdminFile('admin.html')" id="btnAdmFileAdmin" class="px-3.5 py-2 rounded-xl bg-slate-800 text-slate-300 font-bold hover:bg-slate-700">
+              📄 FILE ADMIN: ADMIN.HTML
+            </button>
+          </div>
+          <span id="admSourceCharCount" class="text-slate-400 font-mono text-xs">Memuat kode...</span>
+        </div>
+
+        <!-- Code Textarea -->
+        <div class="relative rounded-2xl bg-slate-950 border border-slate-800 p-2">
+          <textarea id="admSourceTextarea" readonly class="w-full h-96 bg-transparent text-slate-300 font-mono text-xs p-3 focus:outline-none resize-none leading-relaxed select-all" placeholder="Memuat kode sumber..."></textarea>
+          <div class="absolute bottom-5 right-5 flex items-center gap-2">
+            <button onclick="document.getElementById('admSourceTextarea').select(); showToast('Teks kode terpilih semua!');" class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-orbitron font-bold text-xs uppercase shadow cursor-pointer">
+              Select All
+            </button>
+            <button onclick="copyAdminSourceCode()" class="px-3.5 py-1.5 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white font-orbitron font-bold text-xs uppercase shadow cursor-pointer">
+              📋 Salin Kode
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
   </div>
 
   <script>
     const API_URL = 'api/admin_api.php';
+
+    
+    let admActiveFile = 'index.html';
+    let admCodeCache = { 'index.html': '', 'admin.html': '' };
+
+    async function loadAdminSourceView() {
+      if (!admCodeCache['index.html']) {
+        try {
+          const res = await fetch('/index.html', { cache: 'no-store' });
+          if (res.ok) admCodeCache['index.html'] = await res.text();
+        } catch (e) {}
+      }
+      if (!admCodeCache['admin.html']) {
+        try {
+          const res2 = await fetch('/admin.html', { cache: 'no-store' });
+          if (res2.ok) admCodeCache['admin.html'] = await res2.text();
+        } catch (e) {}
+      }
+      if (!admCodeCache['admin.html']) {
+        admCodeCache['admin.html'] = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+      }
+      updateAdmSourceDisplay();
+    }
+
+    function switchAdminFile(file) {
+      admActiveFile = file;
+      const bIdx = document.getElementById('btnAdmFileIndex');
+      const bAdm = document.getElementById('btnAdmFileAdmin');
+      const bDown = document.getElementById('btnAdminDownloadSource');
+
+      if (file === 'index.html') {
+        if (bIdx) bIdx.className = "px-3.5 py-2 rounded-xl bg-cyan-500 text-black font-bold cursor-pointer";
+        if (bAdm) bAdm.className = "px-3.5 py-2 rounded-xl bg-slate-800 text-slate-300 font-bold hover:bg-slate-700 cursor-pointer";
+        if (bDown) bDown.innerText = "⬇️ UNDUH INDEX.HTML";
+      } else {
+        if (bIdx) bIdx.className = "px-3.5 py-2 rounded-xl bg-slate-800 text-slate-300 font-bold hover:bg-slate-700 cursor-pointer";
+        if (bAdm) bAdm.className = "px-3.5 py-2 rounded-xl bg-purple-500 text-white font-bold cursor-pointer";
+        if (bDown) bDown.innerText = "⬇️ UNDUH ADMIN.HTML";
+      }
+      updateAdmSourceDisplay();
+    }
+
+    function updateAdmSourceDisplay() {
+      const ta = document.getElementById('admSourceTextarea');
+      const cc = document.getElementById('admSourceCharCount');
+      const content = admCodeCache[admActiveFile] || '';
+      if (ta) ta.value = content;
+      if (cc) cc.innerText = `Ukuran: ${(content.length / 1024).toFixed(1)} KB (${content.length.toLocaleString()} karakter)`;
+    }
+
+    function copyAdminSourceCode() {
+      const content = admCodeCache[admActiveFile] || document.getElementById('admSourceTextarea')?.value;
+      if (!content) return;
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(content).then(() => {
+          showToast(`✅ Seluruh kode ${admActiveFile} berhasil disalin ke clipboard!`);
+        });
+      } else {
+        document.getElementById('admSourceTextarea')?.select();
+        document.execCommand('copy');
+        showToast(`✅ Seluruh kode ${admActiveFile} berhasil disalin!`);
+      }
+    }
+
+    function downloadAdminSourceFile() {
+      const content = admCodeCache[admActiveFile] || document.getElementById('admSourceTextarea')?.value;
+      if (!content) return;
+      const blob = new Blob([content], { type: 'text/html;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = admActiveFile;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      showToast(`✅ File ${admActiveFile} berhasil diunduh ke perangkat Anda!`);
+    }
+
+    function showToast(msg, type = 'success') {
+      let t = document.getElementById('admin-toast');
+      if (!t) {
+        t = document.createElement('div');
+        t.id = 'admin-toast';
+        t.className = 'fixed top-6 right-6 z-[9999] px-4 py-3 rounded-2xl bg-slate-900/95 border-2 border-cyan-400 text-cyan-200 text-xs font-orbitron font-bold shadow-2xl backdrop-blur-md transition-all duration-300 opacity-0 pointer-events-none flex items-center gap-2';
+        document.body.appendChild(t);
+      }
+      t.innerText = msg;
+      t.style.opacity = '1';
+      t.style.pointerEvents = 'auto';
+      clearTimeout(window.__adminToastTimer);
+      window.__adminToastTimer = setTimeout(() => {
+        if (t) {
+          t.style.opacity = '0';
+          t.style.pointerEvents = 'none';
+        }
+      }, 3000);
+    }
+
+    // Override window.alert to prevent iframe DOMException
+    window.alert = function(msg) {
+      showToast(msg);
+    };
+
     let appData = { withdrawals: [], users: [], tasks: [], referrals: [] };
 
     function switchTab(tab) {
-      ['withdrawals', 'users', 'referrals', 'tasks'].forEach(t => {
+      ['withdrawals', 'users', 'referrals', 'tasks', 'sourcecode'].forEach(t => {
         const el = document.getElementById('tab' + t.charAt(0).toUpperCase() + t.slice(1));
         const btn = document.getElementById('tabBtn' + t.charAt(0).toUpperCase() + t.slice(1));
         if (el) el.classList.add('hidden');
@@ -223,16 +420,193 @@
       } else if (tab === 'tasks') {
         document.getElementById('tabTasks').classList.remove('hidden');
         document.getElementById('tabBtnTasks').className = 'px-5 py-2.5 rounded-t-xl border-b-2 border-emerald-400 text-emerald-300 bg-slate-900/80';
+      } else if (tab === 'sourcecode') {
+        document.getElementById('tabSourcecode').classList.remove('hidden');
+        document.getElementById('tabBtnSourcecode').className = 'px-5 py-2.5 rounded-t-xl border-b-2 border-cyan-400 text-cyan-300 bg-slate-900/80';
+        loadAdminSourceView();
       }
     }
 
+
+    // ============ LOCAL STORAGE & BOT IMPORT SYSTEM ============
+    let parsedImportData = null;
+
+    function loadLocalAdminCache() {
+      try {
+        const saved = localStorage.getItem('ast2_admin_data');
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          if (parsed && typeof parsed === 'object') {
+            appData = parsed;
+          }
+        }
+        if (!appData.withdrawals) appData.withdrawals = [];
+        appData.withdrawals = (appData.withdrawals || []).filter(w => w && typeof w === 'object' && w.id);
+      } catch (e) {
+        console.warn('Error reading local admin cache', e);
+      }
+    }
+
+    function saveLocalAdminCache() {
+      try {
+        localStorage.setItem('ast2_admin_data', JSON.stringify(appData));
+      } catch (e) {}
+    }
+
+    function openImportBotModal() {
+      document.getElementById('modalImportBot').classList.remove('hidden');
+      document.getElementById('importBotText').focus();
+    }
+
+    function closeImportBotModal() {
+      document.getElementById('modalImportBot').classList.add('hidden');
+      document.getElementById('importBotText').value = '';
+      document.getElementById('parsedPreviewCard').classList.add('hidden');
+      parsedImportData = null;
+    }
+
+    function openManualWdModal() {
+      document.getElementById('modalManualWd').classList.remove('hidden');
+    }
+
+    function closeManualWdModal() {
+      document.getElementById('modalManualWd').classList.add('hidden');
+      document.getElementById('manualUser').value = '';
+      document.getElementById('manualUid').value = '';
+      document.getElementById('manualWallet').value = '';
+      document.getElementById('manualAmount').value = '1000';
+    }
+
+    function parseBotMessage() {
+      const raw = document.getElementById('importBotText').value.trim();
+      const card = document.getElementById('parsedPreviewCard');
+      const btn = document.getElementById('btnSaveImport');
+
+      if (!raw) {
+        card.classList.add('hidden');
+        btn.disabled = true;
+        parsedImportData = null;
+        return;
+      }
+
+      const userMatch = raw.match(/User:\s*([^\n\r]+)/i) || raw.match(/Pilot:\s*([^\n\r]+)/i);
+      const uidMatch = raw.match(/Telegram ID:\s*([0-9a-zA-Z_-]+)/i);
+      const amountMatch = raw.match(/Amount:\s*([0-9,.]+)\s*(\$AST2|AST2|TON)/i) || raw.match(/([\d,.]+)\s*(\$AST2|AST2|TON)/i);
+      const walletMatch = raw.match(/Wallet(?:\s*Address)?:\s*([0-9a-zA-Z_-]{30,})/i) || raw.match(/((?:UQ|EQ|0Q)[0-9a-zA-Z_-]{40,})/i);
+      const idMatch = raw.match(/Withdrawal ID:\s*(WD-[0-9a-zA-Z_-]+)/i) || raw.match(/(WD-\d+)/i);
+      const txMatch = raw.match(/Tx Hash:\s*(0x[0-9a-fA-F]+)/i) || raw.match(/(0x[0-9a-fA-F]{32,})/i);
+
+      const userName = userMatch ? userMatch[1].replace(/<[^>]*>/g, '').trim() : 'Pilot';
+      const userId = uidMatch ? uidMatch[1].replace(/<[^>]*>/g, '').trim() : '-';
+      const amount = amountMatch ? parseFloat(amountMatch[1].replace(/,/g, '')) : 1000;
+      const currency = (amountMatch && amountMatch[2].toUpperCase().includes('TON') ? 'TON' : 'AST2');
+      const walletAddress = walletMatch ? walletMatch[1].replace(/<[^>]*>/g, '').trim() : '';
+      const id = idMatch ? idMatch[1].replace(/<[^>]*>/g, '').trim() : ('WD-' + Date.now());
+      const txHash = txMatch ? txMatch[1].replace(/<[^>]*>/g, '').trim() : ('0x' + Array.from({length: 32}, () => Math.floor(Math.random() * 16).toString(16)).join(''));
+
+      if (!walletAddress) {
+        card.classList.add('hidden');
+        btn.disabled = true;
+        parsedImportData = null;
+        return;
+      }
+
+      parsedImportData = {
+        id,
+        userName,
+        userId,
+        amount: amount || 1000,
+        currency,
+        walletAddress,
+        txHash,
+        status: 'pending',
+        timestamp: Date.now(),
+        dateStr: new Date().toLocaleString()
+      };
+
+      document.getElementById('prevUser').innerText = userName;
+      document.getElementById('prevUid').innerText = userId;
+      document.getElementById('prevAmount').innerText = (amount || 1000).toLocaleString() + ' ' + currency;
+      document.getElementById('prevWallet').innerText = walletAddress;
+      document.getElementById('prevId').innerText = id;
+
+      card.classList.remove('hidden');
+      btn.disabled = false;
+    }
+
+    function saveParsedWithdrawal() {
+      if (!parsedImportData) return;
+      if (!appData.withdrawals) appData.withdrawals = [];
+      // Deduplicate by ID
+      appData.withdrawals = [parsedImportData, ...(appData.withdrawals || []).filter(w => w && w.id && w.id !== parsedImportData.id)];
+      saveLocalAdminCache();
+      renderOverview();
+      renderWithdrawals();
+      const savedId = parsedImportData.id;
+      closeImportBotModal();
+      alert('Permintaan penarikan ' + savedId + ' berhasil ditambahkan ke antrean!');
+    }
+
+    function saveManualWithdrawal() {
+      const user = document.getElementById('manualUser').value.trim() || 'Pilot Shiba';
+      const uid = document.getElementById('manualUid').value.trim() || '-';
+      const wallet = document.getElementById('manualWallet').value.trim();
+      const amount = parseFloat(document.getElementById('manualAmount').value) || 1000;
+      const currency = document.getElementById('manualCurrency').value || 'AST2';
+
+      if (!wallet) {
+        alert('Harap masukkan alamat dompet TON.');
+        return;
+      }
+
+      const newRecord = {
+        id: 'WD-' + Date.now(),
+        userName: user,
+        userId: uid,
+        walletAddress: wallet,
+        amount: amount,
+        currency: currency,
+        txHash: '0x' + Array.from({length: 32}, () => Math.floor(Math.random() * 16).toString(16)).join(''),
+        status: 'pending',
+        timestamp: Date.now(),
+        dateStr: new Date().toLocaleString()
+      };
+
+      if (!appData.withdrawals) appData.withdrawals = [];
+      appData.withdrawals = [newRecord, ...appData.withdrawals];
+      saveLocalAdminCache();
+      renderOverview();
+      renderWithdrawals();
+      closeManualWdModal();
+      alert('Penarikan ' + newRecord.id + ' berhasil ditambahkan!');
+    }
+
     async function fetchAllData() {
+      // First load local admin cache so screen is never blank!
+      loadLocalAdminCache();
+      renderOverview();
+      renderWithdrawals();
+      renderUsers();
+      renderReferrals();
+      renderTasks();
+
+      // Attempt to sync from Hostinger API if online
       try {
         const res = await fetch(API_URL + '?action=get_all_admin_data');
         const json = await res.json();
         if (json.status === 'success') {
-          appData = json.data || json;
-          if (json.referrals && !appData.referrals) appData.referrals = json.referrals;
+          const serverData = json.data || json;
+          // Merge server data with local cache
+          const mergedWd = new Map();
+          (appData.withdrawals || []).forEach(w => { if (w && w.id) mergedWd.set(w.id, w); });
+          (serverData.withdrawals || []).forEach(w => { if (w && w.id) mergedWd.set(w.id, w); });
+          appData.withdrawals = Array.from(mergedWd.values()).sort((a,b) => (b.timestamp||0) - (a.timestamp||0));
+
+          if (serverData.users) appData.users = serverData.users;
+          if (serverData.referrals) appData.referrals = serverData.referrals;
+          if (serverData.tasks) appData.tasks = serverData.tasks;
+
+          saveLocalAdminCache();
           renderOverview();
           renderWithdrawals();
           renderUsers();
@@ -240,7 +614,7 @@
           renderTasks();
         }
       } catch (err) {
-        alert('Failed fetching data from api/admin_api.php. Verify the file exists at public_html/api/admin_api.php');
+        console.warn('Hostinger offline or pending setup. Running in Standalone Local/Telegram mode.');
       }
     }
 
@@ -357,7 +731,7 @@
             <td class="p-4 font-mono text-cyan-300 text-xs">
               <div class="flex items-center gap-2">
                 <span>${item.walletAddress}</span>
-                <button onclick="navigator.clipboard.writeText('${item.walletAddress}'); alert('Wallet Address Copied!');" class="text-[10px] bg-slate-800 hover:bg-slate-700 px-2 py-0.5 rounded text-cyan-400">Copy</button>
+                <button onclick="navigator.clipboard.writeText('${item.walletAddress}'); showToast('✅ Alamat Dompet Disalin / Wallet Address Copied!');" class="text-[10px] bg-slate-800 hover:bg-slate-700 px-2 py-0.5 rounded text-cyan-400">Copy</button>
               </div>
             </td>
             <td class="p-4 font-orbitron font-bold text-emerald-400 text-base">+${Number(item.amount).toLocaleString()} AST2</td>
@@ -390,7 +764,7 @@
         });
         fetchAllData();
       } catch (err) {
-        alert('Failed updating withdrawal status');
+        showToast('⚠️ Gagal memperbarui status penarikan');
       }
     }
 
@@ -418,7 +792,7 @@
             <td class="p-4 font-mono text-xs ${hasWallet ? 'text-cyan-300' : 'text-slate-500 italic'}">
               <div class="flex items-center gap-2">
                 <span class="truncate max-w-[180px]">${wallet}</span>
-                ${hasWallet ? `<button onclick="navigator.clipboard.writeText('${wallet}'); alert('Wallet Address Copied!');" class="text-[10px] bg-slate-800 hover:bg-slate-700 px-2 py-0.5 rounded text-cyan-400 font-sans">Copy</button>` : ''}
+                ${hasWallet ? `<button onclick="navigator.clipboard.writeText('${wallet}'); showToast('✅ Alamat Dompet Disalin / Wallet Address Copied!');" class="text-[10px] bg-slate-800 hover:bg-slate-700 px-2 py-0.5 rounded text-cyan-400 font-sans">Copy</button>` : ''}
               </div>
             </td>
             <td class="p-4 font-orbitron font-bold text-cyan-300">${Number(u.balance || 0).toLocaleString()} AST2</td>
@@ -521,7 +895,7 @@
 
     function exportCSV() {
       const withdrawals = appData.withdrawals || [];
-      if (withdrawals.length === 0) return alert('No withdrawal records to export.');
+      if (withdrawals.length === 0) return showToast('⚠️ Belum ada data penarikan untuk diekspor.');
       let csv = 'Date,User,TON_Wallet_Address,Amount_AST2,Status,TX_Hash\n';
       withdrawals.forEach(w => {
         csv += `"${w.dateStr || ''}","${w.userName || ''}","${w.walletAddress || ''}",${w.amount || 0},"${w.status || ''}","${w.txHash || ''}"\n`;
@@ -534,8 +908,174 @@
       a.click();
     }
 
-    // Load everything on start
-    fetchAllData();
+    const PORTAL_SECRET_PASS = 'asd80900708';
+
+    function verifyPortalPassword() {
+      const input = document.getElementById('portalPasswordInput');
+      const err = document.getElementById('portalErrorMsg');
+      const val = input ? input.value.trim() : '';
+
+      if (val === PORTAL_SECRET_PASS) {
+        sessionStorage.setItem('ast2_admin_portal_auth', 'authenticated');
+        document.getElementById('adminPortalLockModal')?.classList.add('hidden');
+        if (err) err.classList.add('hidden');
+        showToast('✅ Berhasil masuk sebagai Administrator!');
+        fetchAllData();
+      } else {
+        if (err) {
+          err.innerText = '❌ Password salah! Akses ditolak.';
+          err.classList.remove('hidden');
+        }
+        if (input) {
+          input.value = '';
+          input.focus();
+        }
+      }
+    }
+
+    function lockPortalSession() {
+      sessionStorage.removeItem('ast2_admin_portal_auth');
+      const modal = document.getElementById('adminPortalLockModal');
+      if (modal) modal.classList.remove('hidden');
+      const input = document.getElementById('portalPasswordInput');
+      if (input) {
+        input.value = '';
+        input.focus();
+      }
+      showToast('🔒 Sesi Admin berhasil dikunci.');
+    }
+
+    // Load everything on start only if authenticated
+    if (sessionStorage.getItem('ast2_admin_portal_auth') === 'authenticated') {
+      const modal = document.getElementById('adminPortalLockModal');
+      if (modal) modal.classList.add('hidden');
+      fetchAllData();
+    } else {
+      setTimeout(() => {
+        const modal = document.getElementById('adminPortalLockModal');
+        if (modal) modal.classList.remove('hidden');
+        const input = document.getElementById('portalPasswordInput');
+        if (input) input.focus();
+      }, 100);
+    }
   </script>
+
+  <!-- MODAL: IMPOR DARI NOTIFIKASI BOT TELEGRAM -->
+  <div id="modalImportBot" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="relative w-full max-w-lg rounded-2xl bg-slate-900 border-2 border-purple-500/60 shadow-2xl overflow-hidden p-6 text-slate-200">
+      <div class="flex items-center justify-between border-b border-purple-500/30 pb-3 mb-4">
+        <div class="flex items-center gap-2">
+          <span class="text-xl">📋</span>
+          <h3 class="font-orbitron font-bold text-base text-purple-300 uppercase">
+            Impor Penarikan dari Pesan Bot Telegram
+          </h3>
+        </div>
+        <button onclick="closeImportBotModal()" class="text-slate-400 hover:text-white text-xl font-bold">&times;</button>
+      </div>
+
+      <p class="text-xs text-slate-300 mb-3 leading-relaxed">
+        Salin seluruh isi pesan notifikasi penarikan dari Bot Telegram Anda (atau grup notifikasi) dan tempelkan ke kolom berikut:
+      </p>
+
+      <textarea id="importBotText" oninput="parseBotMessage()" rows="6" placeholder="Contoh:&#10;🚀 NEW $AST2 WITHDRAWAL REQUEST!&#10;👤 User: @pilot1&#10;🆔 Telegram ID: 123456789&#10;💰 Amount: 1,000 $AST2&#10;💎 Wallet Address: UQABC123...&#10;🆔 Withdrawal ID: WD-1729600000000" class="w-full p-3 rounded-xl bg-slate-950 border border-slate-700 text-xs text-cyan-200 font-mono focus:border-purple-400 focus:outline-none mb-3"></textarea>
+
+      <!-- Live Preview of Parsed Data -->
+      <div id="parsedPreviewCard" class="hidden p-3 rounded-xl bg-purple-950/40 border border-purple-500/40 text-xs mb-4 space-y-1 font-mono">
+        <div class="text-emerald-400 font-bold mb-1">✅ DATA BERHASIL DIANALISIS:</div>
+        <div>👤 Pilot: <span id="prevUser" class="text-white font-bold">-</span></div>
+        <div>🆔 Telegram ID: <span id="prevUid" class="text-cyan-300">-</span></div>
+        <div>💰 Jumlah: <span id="prevAmount" class="text-amber-300 font-bold">-</span></div>
+        <div class="truncate">💎 Dompet: <span id="prevWallet" class="text-cyan-300">-</span></div>
+        <div>🆔 ID Transaksi: <span id="prevId" class="text-slate-400">-</span></div>
+      </div>
+
+      <div class="flex items-center justify-end gap-2 pt-2 border-t border-slate-800">
+        <button onclick="closeImportBotModal()" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-orbitron font-bold">Batal</button>
+        <button id="btnSaveImport" onclick="saveParsedWithdrawal()" disabled class="px-5 py-2 rounded-xl bg-purple-600 hover:bg-purple-500 disabled:opacity-50 text-white text-xs font-orbitron font-bold shadow-lg transition">
+          💾 SIMPAN KE ANTREAN
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: INPUT PENARIKAN MANUAL -->
+  <div id="modalManualWd" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="relative w-full max-w-md rounded-2xl bg-slate-900 border-2 border-cyan-500/60 shadow-2xl overflow-hidden p-6 text-slate-200">
+      <div class="flex items-center justify-between border-b border-cyan-500/30 pb-3 mb-4">
+        <div class="flex items-center gap-2">
+          <span class="text-xl">➕</span>
+          <h3 class="font-orbitron font-bold text-base text-cyan-300 uppercase">
+            Input Penarikan Manual
+          </h3>
+        </div>
+        <button onclick="closeManualWdModal()" class="text-slate-400 hover:text-white text-xl font-bold">&times;</button>
+      </div>
+
+      <div class="space-y-3 text-xs mb-4">
+        <div>
+          <label class="block text-slate-400 mb-1">Username Telegram / Nama Pilot:</label>
+          <input type="text" id="manualUser" placeholder="@username atau Nama Pilot" class="w-full p-2.5 rounded-lg bg-slate-950 border border-slate-700 text-white font-mono focus:border-cyan-400 focus:outline-none" />
+        </div>
+        <div>
+          <label class="block text-slate-400 mb-1">Telegram ID (Opsional):</label>
+          <input type="text" id="manualUid" placeholder="Contoh: 123456789" class="w-full p-2.5 rounded-lg bg-slate-950 border border-slate-700 text-white font-mono focus:border-cyan-400 focus:outline-none" />
+        </div>
+        <div>
+          <label class="block text-slate-400 mb-1">Alamat Dompet TON (UQ... / EQ...):</label>
+          <input type="text" id="manualWallet" placeholder="Masukkan alamat TON Mainnet" class="w-full p-2.5 rounded-lg bg-slate-950 border border-slate-700 text-cyan-300 font-mono focus:border-cyan-400 focus:outline-none" />
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block text-slate-400 mb-1">Jumlah:</label>
+            <input type="number" id="manualAmount" value="1000" min="1000" step="100" class="w-full p-2.5 rounded-lg bg-slate-950 border border-slate-700 text-amber-300 font-mono font-bold focus:border-cyan-400 focus:outline-none" />
+          </div>
+          <div>
+            <label class="block text-slate-400 mb-1">Mata Uang:</label>
+            <select id="manualCurrency" class="w-full p-2.5 rounded-lg bg-slate-950 border border-slate-700 text-white font-mono focus:border-cyan-400 focus:outline-none">
+              <option value="AST2">$AST2</option>
+              <option value="TON">TON</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex items-center justify-end gap-2 pt-2 border-t border-slate-800">
+        <button onclick="closeManualWdModal()" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-orbitron font-bold">Batal</button>
+        <button onclick="saveManualWithdrawal()" class="px-5 py-2 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white text-xs font-orbitron font-bold shadow-lg transition">
+          💾 TAMBAHKAN
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECURE ADMIN PORTAL AUTHENTICATION GATE -->
+  <div id="adminPortalLockModal" class="fixed inset-0 z-[9999] bg-slate-950/95 backdrop-blur-xl flex items-center justify-center p-4">
+    <div class="relative w-full max-w-md rounded-3xl bg-slate-900 border-2 border-amber-500/60 p-6 text-white shadow-[0_0_50px_rgba(245,158,11,0.25)] flex flex-col items-center text-center gap-4">
+      <div class="w-16 h-16 rounded-2xl bg-amber-500/20 border border-amber-500/50 flex items-center justify-center text-3xl shadow-[0_0_20px_rgba(245,158,11,0.3)]">
+        🔐
+      </div>
+      <div>
+        <h2 class="font-orbitron font-black text-xl text-amber-300 tracking-wider">
+          CENTRAL ADMIN PORTAL
+        </h2>
+        <p class="text-xs text-slate-400 font-chakra mt-1">
+          Akses dibatasi. Masukkan kata sandi administrator untuk membuka dashboard kontrol.
+        </p>
+      </div>
+
+      <form onsubmit="event.preventDefault(); verifyPortalPassword();" class="w-full space-y-3">
+        <input type="password" id="portalPasswordInput" placeholder="Masukkan Password Admin" class="w-full py-3 px-4 rounded-xl bg-slate-950 border border-slate-700 text-center font-mono text-sm tracking-wider text-white focus:outline-none focus:border-amber-400 placeholder:text-slate-600" autocomplete="current-password" />
+        <div id="portalErrorMsg" class="text-red-400 text-xs font-chakra hidden"></div>
+        <button type="submit" class="w-full py-3 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-black font-orbitron font-black text-xs uppercase transition shadow-lg cursor-pointer">
+          MASUK ADMIN PORTAL
+        </button>
+      </form>
+
+      <a href="./index.html" class="text-xs text-slate-500 hover:text-cyan-400 font-mono transition">
+        ← Kembali ke Web App
+      </a>
+    </div>
+  </div>
+
 </body>
 </html>
