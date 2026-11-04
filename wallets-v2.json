@@ -1,46 +1,212 @@
 [
   {
-    "app_name": "telegram-wallet",
-    "name": "Wallet in Telegram",
-    "image": "https://wallet.tg/images/logo-288.png",
-    "about_url": "https://wallet.tg/",
-    "universal_url": "https://t.me/wallet?attach=wallet",
-    "bridge": [
-      {
-        "type": "sse",
-        "url": "https://bridge.ton.org/bridge"
-      }
-    ],
-    "platforms": ["ios", "android", "macos", "windows", "linux"]
-  },
-  {
     "app_name": "tonkeeper",
     "name": "Tonkeeper",
     "image": "https://tonkeeper.com/assets/tonconnect-icon.png",
+    "tondns": "tonkeeper.ton",
     "about_url": "https://tonkeeper.com",
     "universal_url": "https://app.tonkeeper.com/ton-connect",
-    "deepLink": "tonkeeper://tc",
+    "deepLink": "tonkeeper-tc://",
     "bridge": [
       {
         "type": "sse",
         "url": "https://bridge.tonapi.io/bridge"
+      },
+      {
+        "type": "js",
+        "key": "tonkeeper"
       }
     ],
-    "platforms": ["ios", "android", "chrome", "firefox"]
+    "platforms": [
+      "ios",
+      "android",
+      "chrome",
+      "firefox",
+      "macos",
+      "windows",
+      "linux"
+    ],
+    "features": [
+      {
+        "name": "SendTransaction",
+        "maxMessages": 255,
+        "extraCurrencySupported": true
+      },
+      {
+        "name": "SignData",
+        "types": [
+          "text",
+          "binary",
+          "cell"
+        ]
+      }
+    ]
+  },
+  {
+    "app_name": "telegram-wallet",
+    "name": "Wallet in Telegram",
+    "image": "https://wallet.tg/images/logo-288.png",
+    "about_url": "https://walt.io/",
+    "universal_url": "https://t.me/wallet?attach=wallet",
+    "bridge": [
+      {
+        "type": "sse",
+        "url": "https://walletbot.me/tonconnect-bridge/bridge"
+      }
+    ],
+    "platforms": [
+      "ios",
+      "android",
+      "macos",
+      "windows",
+      "linux"
+    ],
+    "features": [
+      {
+        "name": "SendTransaction",
+        "maxMessages": 255,
+        "extraCurrencySupported": true
+      },
+      {
+        "name": "SignData",
+        "types": [
+          "text",
+          "binary",
+          "cell"
+        ]
+      }
+    ]
   },
   {
     "app_name": "mytonwallet",
     "name": "MyTonWallet",
-    "image": "https://mytonwallet.io/icon-256.png",
-    "about_url": "https://mytonwallet.io",
+    "image": "https://static.mywallet.io/mywallet/icon-288.png",
+    "about_url": "https://mywallet.io/?utm_source=tc",
     "universal_url": "https://connect.mytonwallet.org",
-    "deepLink": "mytonwallet://tc",
+    "deepLink": "mytonwallet-tc://",
+    "bridge": [
+      {
+        "type": "js",
+        "key": "mytonwallet"
+      },
+      {
+        "type": "sse",
+        "url": "https://tonconnectbridge.mytonwallet.org/bridge/"
+      }
+    ],
+    "platforms": [
+      "chrome",
+      "windows",
+      "macos",
+      "linux",
+      "ios",
+      "android",
+      "firefox"
+    ],
+    "features": [
+      {
+        "name": "SendTransaction",
+        "maxMessages": 255,
+        "extraCurrencySupported": false
+      },
+      {
+        "name": "SignData",
+        "types": [
+          "text",
+          "binary",
+          "cell"
+        ]
+      }
+    ]
+  },
+  {
+    "app_name": "bitgetTonWallet",
+    "name": "Bitget Wallet",
+    "image": "https://raw.githubusercontent.com/bitgetwallet/download/refs/heads/main/logo/png/bitget_wallet_logo_288_mini.png",
+    "about_url": "https://web3.bitget.com",
+    "deepLink": "bitkeep://",
+    "bridge": [
+      {
+        "type": "js",
+        "key": "bitgetTonWallet"
+      },
+      {
+        "type": "sse",
+        "url": "https://ton-connect-bridge.bgwapi.io/bridge"
+      }
+    ],
+    "platforms": [
+      "ios",
+      "android",
+      "chrome"
+    ],
+    "universal_url": "https://bkcode.vip/ton-connect",
+    "features": [
+      {
+        "name": "SendTransaction",
+        "maxMessages": 4,
+        "extraCurrencySupported": false
+      }
+    ]
+  },
+  {
+    "app_name": "okxTonWallet",
+    "name": "OKX Wallet",
+    "image": "https://static.okx.com/cdn/web3/assets/imgs/70d223c0-8527-40c1-8292-b3cc10b53d88.png",
+    "about_url": "https://web3.okx.com",
+    "universal_url": "https://web3.okx.com/download?appendQuery=true&deeplink=okxwallet://web3/wallet/tonconnect",
+    "bridge": [
+      {
+        "type": "js",
+        "key": "okxTonWallet"
+      },
+      {
+        "type": "sse",
+        "url": "https://web3.okx.com/tonbridge/discover/rpc/bridge"
+      }
+    ],
+    "platforms": [
+      "chrome",
+      "safari",
+      "firefox",
+      "ios",
+      "android"
+    ],
+    "features": [
+      {
+        "name": "SendTransaction",
+        "maxMessages": 4,
+        "extraCurrencySupported": false
+      }
+    ]
+  },
+  {
+    "app_name": "tonhub",
+    "name": "Tonhub",
+    "image": "https://tonhub.com/tonconnect-image.png",
+    "about_url": "https://tonhub.com",
+    "universal_url": "https://tonhub.com/ton-connect",
+    "deepLink": "tonhub://tc",
     "bridge": [
       {
         "type": "sse",
-        "url": "https://tonconnect.mytonwallet.org/bridge"
+        "url": "https://connect.tonhubapi.com/tonconnect"
+      },
+      {
+        "type": "js",
+        "key": "tonhub"
       }
     ],
-    "platforms": ["chrome", "windows", "macos", "linux", "ios", "android"]
+    "platforms": [
+      "ios",
+      "android"
+    ],
+    "features": [
+      {
+        "name": "SendTransaction",
+        "maxMessages": 10,
+        "extraCurrencySupported": false
+      }
+    ]
   }
 ]
