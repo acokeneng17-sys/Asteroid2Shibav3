@@ -10,7 +10,7 @@
     body { font-family: 'Chakra Petch', sans-serif; background: #030712; color: #f8fafc; }
     .font-orbitron { font-family: 'Orbitron', sans-serif; }
   </style>
-<script src="/_aistudio-iframe.js?v=1f94f900"></script></head>
+</head>
 <body class="min-h-screen p-3 md:p-8">
   <div class="max-w-7xl mx-auto">
     <!-- Header -->
@@ -32,6 +32,9 @@
           <span>👛</span>
           <span>BUKA WEB WALLET</span>
         </a>
+        <button onclick="openHostingerConfigModal()" class="px-3.5 py-2 rounded-xl bg-slate-900 border border-cyan-500/50 text-cyan-300 font-bold hover:bg-slate-800 transition flex items-center gap-1.5 text-xs font-orbitron cursor-pointer" title="Konfigurasi Koneksi Hostinger & Sync Otomatis">
+          🌐 HOSTINGER API
+        </button>
         <button onclick="fetchAllData()" class="px-3.5 py-2 rounded-xl bg-slate-900 border border-amber-500/50 text-amber-300 font-bold hover:bg-slate-800 transition flex items-center gap-1.5 text-xs font-orbitron">
           🔄 REFRESH
         </button>
@@ -328,7 +331,7 @@
   </div>
 
   <script>
-    const API_URL = '/api/admin_api.php';
+    let API_URL = localStorage.getItem('ast2_hostinger_api_url') || '/api/admin_api.php';
 
     
     let admActiveFile = 'index.html';
@@ -547,6 +550,64 @@
       document.getElementById('manualAmount').value = '1000';
     }
 
+    function openHostingerConfigModal() {
+      const input = document.getElementById('hostingerApiInput');
+      if (input) {
+        input.value = localStorage.getItem('ast2_hostinger_api_url') || API_URL || 'https://asteroid2shiba.com/api/admin_api.php';
+      }
+      const statusEl = document.getElementById('hostingerConnStatus');
+      if (statusEl) statusEl.innerHTML = '<span class="text-slate-400">Tekan "Tes Koneksi" untuk memeriksa apakah Hostinger API sudah aktif.</span>';
+      document.getElementById('modalHostingerConfig').classList.remove('hidden');
+    }
+
+    function closeHostingerConfigModal() {
+      document.getElementById('modalHostingerConfig').classList.add('hidden');
+    }
+
+    async function testHostingerConnection() {
+      const urlInput = (document.getElementById('hostingerApiInput')?.value || '').trim();
+      const statusEl = document.getElementById('hostingerConnStatus');
+      if (!urlInput) {
+        if (statusEl) statusEl.innerHTML = '<span class="text-red-400 font-bold">⚠️ Harap masukkan URL Hostinger API</span>';
+        return;
+      }
+      if (statusEl) statusEl.innerHTML = '<span class="text-amber-300 animate-pulse font-bold">⏳ Menguji koneksi ke server Hostinger...</span>';
+      try {
+        const testUrl = urlInput.includes('?') ? `${urlInput}&action=ping` : `${urlInput}?action=ping`;
+        const res = await fetch(testUrl, { signal: AbortSignal.timeout(6000) });
+        if (res.ok) {
+          const json = await res.json().catch(() => ({}));
+          if (statusEl) statusEl.innerHTML = `<span class="text-emerald-400 font-bold">✅ TERHUBUNG SUKSES (200 OK): ${json.message || 'API Siap Menerima Data Pengguna & Penarikan!'}</span>`;
+          showToast('✅ Berhasil terhubung ke Hostinger API!');
+        } else {
+          if (statusEl) statusEl.innerHTML = `<span class="text-red-400 font-bold">❌ Error ${res.status}: File admin_api.php belum aktif di Hostinger (${urlInput}). Silakan unduh dan unggah file admin_api.php ke Hostinger public_html/.</span>`;
+        }
+      } catch (err) {
+        if (statusEl) statusEl.innerHTML = `<span class="text-red-400 font-bold">❌ Gagal terhubung (${err.message}). Jika domain baru diarahkan atau file admin_api.php belum diunggah, silakan unggah file admin_api.php ke public_html/.</span>`;
+      }
+    }
+
+    function saveHostingerApiUrl() {
+      const urlInput = (document.getElementById('hostingerApiInput')?.value || '').trim();
+      if (urlInput) {
+        API_URL = urlInput;
+        localStorage.setItem('ast2_hostinger_api_url', urlInput);
+        showToast('✅ URL Hostinger API berhasil disimpan!');
+        fetchAllData();
+      }
+      closeHostingerConfigModal();
+    }
+
+    function downloadAdminPhpFile() {
+      const link = document.createElement('a');
+      link.href = './admin_api.php';
+      link.download = 'admin_api.php';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      showToast('📥 Mengunduh admin_api.php untuk Hostinger...');
+    }
+
     function parseBotMessage() {
       const raw = document.getElementById('importBotText').value.trim();
       const card = document.getElementById('parsedPreviewCard');
@@ -762,51 +823,68 @@
       renderReferrals();
       renderTasks();
 
-      // Attempt to sync from Hostinger API if online
-      try {
-        const res = await fetch(API_URL + '?action=get_all_admin_data');
-        const json = await res.json();
-        if (json.status === 'success') {
-          const serverData = json.data || json;
-          // Merge server data with local cache
-          const mergedWd = new Map();
-          (appData.withdrawals || []).forEach(w => { if (w && w.id) mergedWd.set(w.id, w); });
-          (serverData.withdrawals || []).forEach(w => { if (w && w.id) mergedWd.set(w.id, w); });
-          appData.withdrawals = Array.from(mergedWd.values()).sort((a,b) => (b.timestamp||0) - (a.timestamp||0));
+      // Candidate endpoints for live server synchronization
+      const savedHostinger = localStorage.getItem('ast2_hostinger_api_url');
+      const candidateUrls = [
+        savedHostinger,
+        API_URL,
+        '/api/admin_api.php',
+        '/admin_api.php',
+        'https://asteroid2shiba.com/api/admin_api.php',
+        'https://asteroid2shiba.com/admin_api.php'
+      ];
+      const uniqueCandidates = [...new Set(candidateUrls.filter(Boolean))];
 
-          if (Array.isArray(serverData.users)) {
-            const uMap = new Map();
-            (appData.users || []).forEach(u => {
-              if (u && (u.userId || u.walletAddress)) {
-                uMap.set(String(u.userId || u.walletAddress), u);
-              }
-            });
-            serverData.users.forEach(u => {
-              if (u && (u.userId || u.walletAddress)) {
-                const k = String(u.userId || u.walletAddress);
-                const existing = uMap.get(k);
-                uMap.set(k, existing ? { ...existing, ...u } : u);
-              }
-            });
-            appData.users = Array.from(uMap.values());
-          }
-          if (serverData.referrals) appData.referrals = serverData.referrals;
-          const isEditingTask = document.activeElement && (document.activeElement.id || '').startsWith('task_');
-          if (serverData.tasks && !isEditingTask) {
-            appData.tasks = serverData.tasks;
-          }
+      for (const candUrl of uniqueCandidates) {
+        try {
+          const testEndpoint = candUrl.includes('?') ? `${candUrl}&action=get_all_admin_data` : `${candUrl}?action=get_all_admin_data`;
+          const res = await fetch(testEndpoint, { signal: AbortSignal.timeout(4000) });
+          if (!res.ok) continue;
+          const json = await res.json();
+          if (json && (json.status === 'success' || json.data || json.users)) {
+            API_URL = candUrl;
+            const serverData = json.data || json;
+            // Merge server data with local cache
+            const mergedWd = new Map();
+            (appData.withdrawals || []).forEach(w => { if (w && w.id) mergedWd.set(w.id, w); });
+            (serverData.withdrawals || []).forEach(w => { if (w && w.id) mergedWd.set(w.id, w); });
+            appData.withdrawals = Array.from(mergedWd.values()).sort((a,b) => (b.timestamp||0) - (a.timestamp||0));
 
-          saveLocalAdminCache();
-          renderOverview();
-          renderWithdrawals();
-          renderUsers();
-          renderReferrals();
-          if (!isEditingTask) {
-            renderTasks();
+            if (Array.isArray(serverData.users)) {
+              const uMap = new Map();
+              (appData.users || []).forEach(u => {
+                if (u && (u.userId || u.walletAddress)) {
+                  uMap.set(String(u.userId || u.walletAddress), u);
+                }
+              });
+              serverData.users.forEach(u => {
+                if (u && (u.userId || u.walletAddress)) {
+                  const k = String(u.userId || u.walletAddress);
+                  const existing = uMap.get(k);
+                  uMap.set(k, existing ? { ...existing, ...u } : u);
+                }
+              });
+              appData.users = Array.from(uMap.values());
+            }
+            if (serverData.referrals) appData.referrals = serverData.referrals;
+            const isEditingTask = document.activeElement && (document.activeElement.id || '').startsWith('task_');
+            if (serverData.tasks && !isEditingTask) {
+              appData.tasks = serverData.tasks;
+            }
+
+            saveLocalAdminCache();
+            renderOverview();
+            renderWithdrawals();
+            renderUsers();
+            renderReferrals();
+            if (!isEditingTask) {
+              renderTasks();
+            }
+            break; // Stop at first successful backend
           }
+        } catch (err) {
+          // Continue to next candidate
         }
-      } catch (err) {
-        console.warn('Hostinger offline or pending setup. Running in Standalone Local/Telegram mode.');
       }
     }
 
@@ -1301,6 +1379,58 @@
         <button onclick="closeManualWdModal()" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-orbitron font-bold">Batal</button>
         <button onclick="saveManualWithdrawal()" class="px-5 py-2 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white text-xs font-orbitron font-bold shadow-lg transition">
           💾 TAMBAHKAN
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: KONFIGURASI KONEKSI HOSTINGER & BACKEND API -->
+  <div id="modalHostingerConfig" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="relative w-full max-w-lg rounded-2xl bg-slate-900 border-2 border-cyan-500/60 shadow-2xl overflow-hidden p-6 text-slate-200">
+      <div class="flex items-center justify-between border-b border-cyan-500/30 pb-3 mb-4">
+        <div class="flex items-center gap-2">
+          <span class="text-xl">🌐</span>
+          <h3 class="font-orbitron font-bold text-base text-cyan-300 uppercase">
+            Konfigurasi Hostinger &amp; Sinkronisasi Pengguna
+          </h3>
+        </div>
+        <button onclick="closeHostingerConfigModal()" class="text-slate-400 hover:text-white text-xl font-bold">&times;</button>
+      </div>
+
+      <div class="space-y-4 text-xs">
+        <div class="p-3 rounded-xl bg-slate-950 border border-slate-800 leading-relaxed text-slate-300">
+          <p class="font-bold text-amber-300 mb-1">ℹ️ Mengapa data pengguna belum otomatis muncul?</p>
+          <p>
+            Agar data pengguna dari Telegram Mini App tersimpan otomatis di Hostinger, server Anda membutuhkan file <strong>admin_api.php</strong> di folder <code>public_html/</code> atau <code>public_html/api/</code> pada Hostinger.
+          </p>
+        </div>
+
+        <div>
+          <label class="block text-slate-400 font-bold mb-1">URL Endpoint Hostinger API:</label>
+          <input type="text" id="hostingerApiInput" placeholder="https://asteroid2shiba.com/api/admin_api.php" class="w-full p-2.5 rounded-lg bg-slate-950 border border-slate-700 text-cyan-300 font-mono focus:border-cyan-400 focus:outline-none" />
+          <p class="text-[10px] text-slate-500 mt-1">
+            Dapat diisi <code>https://asteroid2shiba.com/api/admin_api.php</code> atau <code>https://asteroid2shiba.com/admin_api.php</code>
+          </p>
+        </div>
+
+        <div id="hostingerConnStatus" class="p-2.5 rounded-lg bg-slate-950 border border-slate-800 font-mono text-[11px] min-h-[38px] flex items-center">
+          <span class="text-slate-400">Tekan "Tes Koneksi" untuk memeriksa apakah Hostinger API sudah aktif.</span>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-2 pt-2">
+          <button onclick="testHostingerConnection()" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-cyan-300 border border-cyan-500/40 text-xs font-orbitron font-bold flex items-center gap-1.5 transition">
+            ⚡ TES KONEKSI
+          </button>
+          <button onclick="downloadAdminPhpFile()" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-amber-300 border border-amber-500/40 text-xs font-orbitron font-bold flex items-center gap-1.5 transition">
+            📥 UNDUH ADMIN_API.PHP
+          </button>
+        </div>
+      </div>
+
+      <div class="flex items-center justify-end gap-2 pt-4 mt-4 border-t border-slate-800">
+        <button onclick="closeHostingerConfigModal()" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-orbitron font-bold">Tutup</button>
+        <button onclick="saveHostingerApiUrl()" class="px-5 py-2 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white text-xs font-orbitron font-bold shadow-lg transition">
+          💾 SIMPAN &amp; SINKRONKAN
         </button>
       </div>
     </div>

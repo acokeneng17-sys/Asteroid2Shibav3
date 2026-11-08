@@ -1,105 +1,123 @@
 [
   {
     "id": "task-partner-follow-x",
-    "title": "Follow Partner on X (Twitter)",
+    "title": "Ikuti Partner Resmi di X (Twitter)",
+    "title_id": "Ikuti Partner Resmi di X (Twitter)",
     "category": "x",
     "reward": 50,
     "rewardType": "AST2",
     "isPartner": true,
-    "partnerName": "AST2 Partner",
+    "partnerName": "Partner AST2",
     "url": "https://x.com/Asteroid2Shiba",
-    "actionText": "Follow on X",
-    "description": "Follow official verified partner account on X • Earn 50 AST2"
+    "actionText": "Ikuti di X",
+    "description": "Ikuti akun partner resmi terverifikasi di platform X • Dapatkan 50 AST2",
+    "desc_id": "Ikuti akun partner resmi terverifikasi di platform X • Dapatkan 50 AST2"
   },
   {
     "id": "task-partner-like-x",
-    "title": "Like Partner Post on X",
+    "title": "Sukai Postingan Partner di X",
+    "title_id": "Sukai Postingan Partner di X",
     "category": "x",
     "reward": 50,
     "rewardType": "AST2",
     "isPartner": true,
-    "partnerName": "AST2 Partner",
+    "partnerName": "Partner AST2",
     "url": "https://x.com/Asteroid2Shiba/status/2097965210137206802",
-    "actionText": "Like on X",
-    "description": "Like official partner announcement post on X • Earn 50 AST2"
+    "actionText": "Sukai di X",
+    "description": "Sukai postingan pengumuman resmi partner di X • Dapatkan 50 AST2",
+    "desc_id": "Sukai postingan pengumuman resmi partner di X • Dapatkan 50 AST2"
   },
   {
     "id": "task-partner-comment-x",
-    "title": "Comment on Partner Post on X",
+    "title": "Komentar di Postingan Partner X",
+    "title_id": "Komentar di Postingan Partner X",
     "category": "x",
     "reward": 50,
     "rewardType": "AST2",
     "isPartner": true,
-    "partnerName": "AST2 Partner",
+    "partnerName": "Partner AST2",
     "url": "https://x.com/Asteroid2Shiba/status/2097965210137206802",
-    "actionText": "Comment on X",
-    "description": "Leave a positive comment on partner post on X • Earn 50 AST2"
+    "actionText": "Komentar",
+    "description": "Tuliskan komentar positif pada postingan partner di X • Dapatkan 50 AST2",
+    "desc_id": "Tuliskan komentar positif pada postingan partner di X • Dapatkan 50 AST2"
   },
   {
     "id": "task-partner-join-tg",
-    "title": "Join Partner Telegram Channel",
+    "title": "Gabung Channel Telegram Partner",
+    "title_id": "Gabung Channel Telegram Partner",
     "category": "telegram",
     "reward": 50,
     "rewardType": "AST2",
     "isPartner": true,
-    "partnerName": "AST2 Partner",
+    "partnerName": "Partner AST2",
     "url": "https://t.me/asteroid2shiba",
-    "actionText": "Join Channel",
-    "description": "Join and subscribe to the official partner Telegram channel • Earn 50 AST2"
+    "actionText": "Gabung",
+    "description": "Gabung dan berlangganan di channel resmi Telegram partner • Dapatkan 50 AST2",
+    "desc_id": "Gabung dan berlangganan di channel resmi Telegram partner • Dapatkan 50 AST2"
   },
   {
     "id": "task-tiktok",
-    "title": "Follow TikTok Asteroid2 Shiba",
+    "title": "Ikuti TikTok Asteroid2 Shiba",
+    "title_id": "Ikuti TikTok Asteroid2 Shiba",
     "category": "tiktok",
     "reward": 50,
     "rewardType": "AST2",
     "isPartner": false,
     "url": "https://www.tiktok.com/@asteroid2shiba",
-    "actionText": "Follow",
-    "description": "Follow the official @asteroid2shiba account on TikTok • Earn 50 AST2"
+    "actionText": "Ikuti",
+    "description": "Ikuti akun resmi @asteroid2shiba di TikTok • Dapatkan 50 AST2",
+    "desc_id": "Ikuti akun resmi @asteroid2shiba di TikTok • Dapatkan 50 AST2"
   },
   {
     "id": "task-x-follow",
-    "title": "Follow Official X (Twitter) Account",
+    "title": "Ikuti Akun Resmi X (Twitter)",
+    "title_id": "Ikuti Akun Resmi X (Twitter)",
     "category": "x",
     "reward": 50,
     "rewardType": "AST2",
     "isPartner": false,
     "url": "https://x.com/Asteroid2Shiba",
-    "actionText": "Follow",
-    "description": "Follow the official @Asteroid2Shiba account on X • Earn 50 AST2"
+    "actionText": "Ikuti",
+    "description": "Ikuti akun resmi @Asteroid2Shiba di platform X • Dapatkan 50 AST2",
+    "desc_id": "Ikuti akun resmi @Asteroid2Shiba di platform X • Dapatkan 50 AST2"
   },
   {
     "id": "task-x-repost",
-    "title": "Like & Repost X Announcement",
+    "title": "Sukai & Repost Postingan Resmi di X",
+    "title_id": "Sukai & Repost Postingan Resmi di X",
     "category": "x",
     "reward": 50,
     "rewardType": "AST2",
     "isPartner": false,
     "url": "https://x.com/Asteroid2Shiba/status/2097965210137206802",
-    "actionText": "Like & Repost",
-    "description": "Like and repost the official $AST2 announcement post • Earn 50 AST2"
+    "actionText": "Sukai & Repost",
+    "description": "Sukai dan bagikan postingan pengumuman resmi $AST2 di X • Dapatkan 50 AST2",
+    "desc_id": "Sukai dan bagikan postingan pengumuman resmi $AST2 di X • Dapatkan 50 AST2"
   },
   {
     "id": "task-tg-channel",
-    "title": "Join Official Telegram Channel",
+    "title": "Gabung Channel Resmi Telegram",
+    "title_id": "Gabung Channel Resmi Telegram",
     "category": "telegram",
     "reward": 100,
     "rewardType": "AST2",
     "isPartner": false,
     "url": "https://t.me/asteroid2shiba",
-    "actionText": "Join",
-    "description": "Join the official Telegram channel t.me/asteroid2shiba • Earn 100 AST2"
+    "actionText": "Gabung",
+    "description": "Gabung ke channel pengumuman Telegram resmi t.me/asteroid2shiba • Dapatkan 100 AST2",
+    "desc_id": "Gabung ke channel pengumuman Telegram resmi t.me/asteroid2shiba • Dapatkan 100 AST2"
   },
   {
     "id": "task-website",
-    "title": "Visit asteroid2shiba.com Website",
+    "title": "Kunjungi Portal asteroid2shiba.com",
+    "title_id": "Kunjungi Portal asteroid2shiba.com",
     "category": "website",
     "reward": 50,
     "rewardType": "AST2",
     "isPartner": false,
     "url": "https://asteroid2shiba.com",
-    "actionText": "Visit",
-    "description": "Explore the official portal at https://asteroid2shiba.com • Earn 50 AST2"
+    "actionText": "Kunjungi",
+    "description": "Buka dan jelajahi portal resmi https://asteroid2shiba.com • Dapatkan 50 AST2",
+    "desc_id": "Buka dan jelajahi portal resmi https://asteroid2shiba.com • Dapatkan 50 AST2"
   }
 ]
