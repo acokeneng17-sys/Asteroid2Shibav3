@@ -2690,12 +2690,23 @@
     }
 
     async function syncAdminDataFromServer() {
-      try {
-        const res = await fetch('/api/admin_api.php?action=get_all_admin_data', { cache: 'no-store' });
-        if (res.ok) {
+      const endpoints = [
+        localStorage.getItem('ast2_hostinger_api_url'),
+        '/admin_api.php',
+        '/api/admin_api.php',
+        'https://asteroid2shiba.com/admin_api.php',
+        'https://asteroid2shiba.com/api/admin_api.php'
+      ];
+      const uniqueEndpoints = [...new Set(endpoints.filter(Boolean))];
+
+      for (const ep of uniqueEndpoints) {
+        try {
+          const testUrl = ep.includes('?') ? `${ep}&action=get_all_admin_data` : `${ep}?action=get_all_admin_data`;
+          const res = await fetch(testUrl, { cache: 'no-store', signal: AbortSignal.timeout(4000) });
+          if (!res.ok) continue;
           const json = await res.json();
           const serverData = json.data || json;
-          if (!serverData || typeof serverData !== 'object') return;
+          if (!serverData || typeof serverData !== 'object') continue;
 
           // 1. Sync Withdrawals
           if (Array.isArray(serverData.withdrawals)) {
@@ -2714,8 +2725,8 @@
                 } else {
                   walletState.history.unshift({
                     type: 'withdraw_request',
-                    asset: sw.asset || 'AST2',
-                    title: `Kirim / Tarik ${sw.asset || 'AST2'}`,
+                    asset: sw.asset || sw.currency || 'AST2',
+                    title: `Kirim / Tarik ${sw.asset || sw.currency || 'AST2'}`,
                     amount: -Math.abs(parseFloat(sw.amount) || 0),
                     walletAddress: sw.walletAddress,
                     status: sw.status,
@@ -2789,9 +2800,8 @@
           saveAdminDataCache();
           if (typeof renderAdminWithdrawals === 'function') renderAdminWithdrawals();
           if (typeof renderAdminUsers === 'function') renderAdminUsers();
-        }
-      } catch (err) {
-        console.warn('Sync admin data warning:', err);
+          break; // successfully synced!
+        } catch (err) {}
       }
     }
     window.syncAdminDataFromServer = syncAdminDataFromServer;
@@ -5030,10 +5040,16 @@
           fetch(ep, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ action: 'add_withdrawal', withdrawal: newWdRecord })
+            body: JSON.stringify({ action: 'new_withdrawal', data: newWdRecord, withdrawal: newWdRecord })
           }).then(r => r.json()).then(data => {
             try { syncAdminDataFromServer(); } catch (e) {}
-          }).catch(() => {});
+          }).catch(() => {
+            fetch(ep, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ action: 'add_withdrawal', data: newWdRecord, withdrawal: newWdRecord })
+            }).catch(() => {});
+          });
         });
       } catch (e) {}
 
